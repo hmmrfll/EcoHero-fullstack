@@ -11,7 +11,9 @@ const userSchema = new mongoose.Schema({
     echaCoins: { type: Number, default: 0 },
     farmingStartTime: { type: Date },
     referrals: [{ type: String }],
-    isPremium: { type: Boolean, default: false } // Добавлено поле для премиум статуса
+    languageCode: { type: String, default: 'en' },
+    isPremium: { type: Boolean, default: false }, // Добавлено поле для премиум статуса
+    hasReceivedReferralBonus: { type: Boolean, default: false }, // Новый флаг для реферального бонуса
 });
 
 const User = mongoose.model('User', userSchema);

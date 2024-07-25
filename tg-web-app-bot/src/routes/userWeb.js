@@ -4,28 +4,6 @@ const bot = require('../index.js');
 
 const router = express.Router();
 
-router.post('/update-profile-photo', async (req, res) => {
-  const { chatId } = req.body;
-
-  try {
-    const userProfilePhotos = await bot.getUserProfilePhotos(chatId);
-    if (userProfilePhotos.photos.length > 0) {
-      const fileId = userProfilePhotos.photos[0][0].file_id;
-      const file = await bot.getFile(fileId);
-      const profilePhotoUrl = `https://api.telegram.org/file/bot${token}/${file.file_path}`;
-
-      await User.updateOne({ chatId }, { profilePhoto: profilePhotoUrl });
-
-      res.json({ profilePhotoUrl });
-    } else {
-      res.status(404).json({ message: 'Profile photo not found' });
-    }
-  } catch (error) {
-    console.error('Error fetching profile photo:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
 // Маршрут для получения топ доноров
 router.get('/top-donors', async (req, res) => {
     console.log('Запрос на получение топ доноров');
@@ -54,6 +32,21 @@ router.get('/:chatId', async (req, res) => {
         console.error('Ошибка:', error);
         res.status(500).json({ error: 'Внутренняя ошибка сервера' });
     }
+});
+
+router.get('/language/:chatId', async (req, res) => {
+  const { chatId } = req.params;
+  try {
+    const user = await User.findOne({ chatId });
+    if (user) {
+      res.json({ languageCode: user.languageCode });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching user language:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 // Маршрут для получения chatId по username
