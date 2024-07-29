@@ -1,0 +1,29 @@
+networks:
+  dev:
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+      - './certs:/etc/nginx/certs'
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - dev
+
+  backend:
+    build:
+      context: ./tg-web-app-bot
+    networks:
+      - dev
+
+  frontend:
+    build:
+      context: ./tg-web-app-front
+    networks:
+      - dev
